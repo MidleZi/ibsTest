@@ -1,10 +1,10 @@
 package ru.azaychikov.ibstest.model;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
+
 import ru.azaychikov.ibstest.data.DataFromYaDisk;
 import ru.azaychikov.ibstest.data.YaDiskFile;
 
@@ -51,7 +51,6 @@ public class Image implements Parcelable {
         mTitle = title;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public static  Image[] getSpacePhotos() {
         ArrayList<YaDiskFile> files = DataFromYaDisk.getFilesFromYandexDiskFolder("https://yadi.sk/d/G8AQKlUhT47Z_w");
         //files.add(new YaDiskFile("https://downloader.disk.yandex.ru/disk/57c10cd7ec2d79a71aca4821cc32f053c1637014f6f07765e0dc21fa7661d7cf/5e3aaa50/bAivw64c2O-nAMw7W4M5XHLflyeQewUz0Pj2WrKlqVdCwkC4z9QdJAK6ClHjVJuX31SiHi666d_jPuLKRn2e7g%3D%3D?uid=0&filename=venus.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=85688&hid=de0145a75ddf50367d5bc55818849908&media_type=image&tknv=v2&etag=f71de2a594c531813143df0ee2a7b387","venus.png", "image"));
