@@ -6,14 +6,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import androidx.palette.graphics.Palette;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-
-import androidx.palette.graphics.Palette;
-import ru.azaychikov.ibstest.model.Image;
 import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.model.Image;
 
 
 public class ImageActivity extends Activity  {
