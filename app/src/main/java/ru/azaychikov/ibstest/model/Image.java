@@ -6,16 +6,26 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 import ru.azaychikov.ibstest.data.DataFromYaDisk;
+import ru.azaychikov.ibstest.data.GetableFiles;
 import ru.azaychikov.ibstest.data.YaDiskFile;
+import ru.azaychikov.ibstest.data.YaDiskFolder;
 
 public class Image implements Parcelable {
 
     private String mUrl;
     private String mTitle;
+    private static DataFromYaDisk disk;
+    private static ArrayList<YaDiskFile> files;
 
     public Image(String url, String title) {
         mUrl = url;
         mTitle = title;
+        disk.setGetableFiles(new GetableFiles() {
+            @Override
+            public void onResponse(String responseText) {
+                getSpacePhotos(responseText);
+            }
+        });
     }
 
     protected Image(Parcel in) {
@@ -51,17 +61,21 @@ public class Image implements Parcelable {
         mTitle = title;
     }
 
-    public static  Image[] getSpacePhotos() {
-        ArrayList<YaDiskFile> files = DataFromYaDisk.getFilesFromYandexDiskFolder("https://yadi.sk/d/G8AQKlUhT47Z_w");
-        //files.add(new YaDiskFile("https://downloader.disk.yandex.ru/disk/57c10cd7ec2d79a71aca4821cc32f053c1637014f6f07765e0dc21fa7661d7cf/5e3aaa50/bAivw64c2O-nAMw7W4M5XHLflyeQewUz0Pj2WrKlqVdCwkC4z9QdJAK6ClHjVJuX31SiHi666d_jPuLKRn2e7g%3D%3D?uid=0&filename=venus.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=85688&hid=de0145a75ddf50367d5bc55818849908&media_type=image&tknv=v2&etag=f71de2a594c531813143df0ee2a7b387","venus.png", "image"));
-        Image[] image = new Image[files.size()];
+    public static Image[] getSpacePhotos(String responseText) {
+        disk = new DataFromYaDisk();
+        System.out.println(responseText);
+        YaDiskFolder folder = disk.responseToFolder(responseText);
+        files = folder.getFiles();
 
-        for(int i = 0; i < files.size(); i++) {
-            if(files.get(i).getMedia_type().equals("image")){
+        Image[] image = new Image[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            if (files.get(i).getMedia_type().equals("image")) {
                 image[i] = new Image(files.get(i).getFile(), files.get(i).getName());
+                System.out.println(i);
+                System.out.println(image[i].mTitle + " " + "\nЗагружен!");
             }
         }
-
+        System.out.println(image.length);
         return image;
     }
 
