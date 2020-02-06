@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,14 +21,26 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
 import ru.azaychikov.ibstest.R;
-import ru.azaychikov.ibstest.data.DataFromYaDisk;
-import ru.azaychikov.ibstest.data.YaDiskFile;
+import ru.azaychikov.ibstest.model.YaDiskFile;
+import ru.azaychikov.ibstest.model.YaDiskFolder;
 import ru.azaychikov.ibstest.model.Image;
+
+/**
+ * Главный экран
+ *
+ * Планы:
+ * 1) сделать обновление по свайпу
+ * 2) сделать перелистываение в ImageActivity
+ * 3) сделать зум в ImageActivity
+ */
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,18 +62,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
+            //Тут мы получаем данные от Я.диск
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
+            //В случаей успешного ответа, получаем JSON, парсим его в список какртинок и передаем в адаптер на отрисовку
             @Override
             public void onResponse(JSONObject response) {
                 // TODO Auto-generated method stub
                 String responseString = response.toString();
-                files = DataFromYaDisk.responseToFolder(responseString).getImages();
+                files = YaDiskFolder.responseToFolder(responseString).getImages();
                 adapter.setmSpacePhotos(files);
             }
         }, new Response.ErrorListener() {
 
+            //В случае ошибки ответа от сервера выводим сообщение об ошибке
             @Override
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
@@ -69,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //ставим выполнение запроса в очередь в volley
         queue.add(jsObjRequest);
+        //отрисовываем лаяут главного экрана
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setAdapter(adapter);

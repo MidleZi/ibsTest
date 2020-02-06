@@ -14,6 +14,9 @@ import com.bumptech.glide.request.target.Target;
 import ru.azaychikov.ibstest.R;
 import ru.azaychikov.ibstest.model.Image;
 
+/**
+ * Экран отображения картинки
+ */
 
 public class ImageActivity extends Activity  {
 
@@ -29,6 +32,7 @@ public class ImageActivity extends Activity  {
         mImageView = (ImageView) findViewById(R.id.image);
         Image spacePhoto = getIntent().getParcelableExtra(EXTRA_SPACE_PHOTO);
 
+        //ПОлучаем картинку и отрисовываем на экране
         Glide.with(this)
                 .load(spacePhoto.getUrl())
                 .asBitmap()

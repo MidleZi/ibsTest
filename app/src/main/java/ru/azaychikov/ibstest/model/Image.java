@@ -5,7 +5,9 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-import ru.azaychikov.ibstest.data.YaDiskFile;
+/**
+ * Сущность для описания картинки
+ */
 
 public class Image implements Parcelable {
 

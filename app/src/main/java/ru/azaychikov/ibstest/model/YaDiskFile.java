@@ -1,4 +1,8 @@
-package ru.azaychikov.ibstest.data;
+package ru.azaychikov.ibstest.model;
+
+/**
+ * Сущность для описания файла на Я.диске
+ */
 
 public class YaDiskFile {
 

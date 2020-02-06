@@ -1,6 +1,10 @@
-package ru.azaychikov.ibstest.data;
+package ru.azaychikov.ibstest.model;
 
 import java.util.ArrayList;
+
+/**
+ * Сущность для описания чего-то промежуточного между папкой и файлом (: на Я.диске (нужно для парсинга JSON)
+ */
 
 public class YaDiskEmbedded {
 
