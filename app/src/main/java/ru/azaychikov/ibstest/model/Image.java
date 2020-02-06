@@ -5,27 +5,16 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-import ru.azaychikov.ibstest.data.DataFromYaDisk;
-import ru.azaychikov.ibstest.data.GetableFiles;
 import ru.azaychikov.ibstest.data.YaDiskFile;
-import ru.azaychikov.ibstest.data.YaDiskFolder;
 
 public class Image implements Parcelable {
 
     private String mUrl;
     private String mTitle;
-    private static DataFromYaDisk disk;
-    private static ArrayList<YaDiskFile> files;
 
     public Image(String url, String title) {
         mUrl = url;
         mTitle = title;
-        disk.setGetableFiles(new GetableFiles() {
-            @Override
-            public void onResponse(String responseText) {
-                getSpacePhotos(responseText);
-            }
-        });
     }
 
     protected Image(Parcel in) {
@@ -49,33 +38,13 @@ public class Image implements Parcelable {
         return mUrl;
     }
 
-    public void setUrl(String url) {
-        mUrl = url;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String title) {
-        mTitle = title;
-    }
-
-    public static Image[] getSpacePhotos(String responseText) {
-        disk = new DataFromYaDisk();
-        System.out.println(responseText);
-        YaDiskFolder folder = disk.responseToFolder(responseText);
-        files = folder.getFiles();
-
+    public static Image[] getSpacePhotos(ArrayList<YaDiskFile> files) {
         Image[] image = new Image[files.size()];
         for (int i = 0; i < files.size(); i++) {
             if (files.get(i).getMedia_type().equals("image")) {
                 image[i] = new Image(files.get(i).getFile(), files.get(i).getName());
-                System.out.println(i);
-                System.out.println(image[i].mTitle + " " + "\nЗагружен!");
             }
         }
-        System.out.println(image.length);
         return image;
     }
 

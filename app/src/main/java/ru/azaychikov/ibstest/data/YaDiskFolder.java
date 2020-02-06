@@ -3,9 +3,9 @@ package ru.azaychikov.ibstest.data;
 import java.util.ArrayList;
 
 public class YaDiskFolder {
-    private String public_key;
-    private String public_url;
+
     private YaDiskEmbedded _embedded;
+    private ArrayList<YaDiskFile> images;
 
     public YaDiskEmbedded getEmb() {
         return _embedded;
@@ -13,5 +13,15 @@ public class YaDiskFolder {
 
     public ArrayList<YaDiskFile> getFiles() {
         return getEmb().getItems();
+    }
+
+    public ArrayList<YaDiskFile> getImages() {
+        images = new ArrayList<>();
+        for (YaDiskFile file : getEmb().getItems()) {
+            if(file.getMedia_type().equals("image")){
+                images.add(file);
+            }
+        }
+        return images;
     }
 }

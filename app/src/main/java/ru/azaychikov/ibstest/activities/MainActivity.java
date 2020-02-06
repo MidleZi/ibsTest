@@ -7,41 +7,95 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import org.json.JSONObject;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.data.DataFromYaDisk;
+import ru.azaychikov.ibstest.data.YaDiskFile;
 import ru.azaychikov.ibstest.model.Image;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private ArrayList<YaDiskFile> files;
+    private MainActivity.ImageAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        adapter = new MainActivity.ImageAdapter(this);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String publicUrl = "https://yadi.sk/d/G8AQKlUhT47Z_w";
+        String url = null;
+        try {
+            url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=" + URLEncoder.encode(publicUrl, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                // TODO Auto-generated method stub
+                String responseString = response.toString();
+                files = DataFromYaDisk.responseToFolder(responseString).getImages();
+                adapter.setmSpacePhotos(files);
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Auto-generated method stub
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Ошибка загрузки, попробуйте еще раз", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        queue.add(jsObjRequest);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+        recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-
-       // try {
-            MainActivity.ImageAdapter adapter = new MainActivity.ImageAdapter(this, Image.getSpacePhotos("{\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"public_url\":\"https://yadi.sk/d/G8AQKlUhT47Z_w\",\"_embedded\":{\"sort\":\"\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"items\":[{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"public_url\":\"https://yadi.sk/i/AaTD_IKEArmSYg\",\"views_count\":3,\"exif\":{\"date_time\":\"2020-02-02T17:02:25+00:00\"},\"created\":\"2020-02-03T20:35:21+00:00\",\"type\":\"file\",\"resource_id\":\"199412764:de7fe630aa70daf598e331bbdfdfb1ff49fa57beebf37abaf33b5d3576420ec1\",\"modified\":\"2020-02-02T17:02:25+00:00\",\"preview\":\"https://downloader.disk.yandex.ru/preview/8e856f25054eaab0e9a07566d2c354f06c8ef805b1739a873ca12dc2b62b087a/5e3b041b/jeWbN0LA59gNCz_yqGGZCZRas8MK3AadLYdm_dFlDV_2MhOQFueru2-s3fkpAbjOGtN4v5a2ZX9L3N2gMKbkwQ%3D%3D?uid=0&filename=IMG_20200202_200225.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v2&size=S&crop=0\",\"size\":4755002,\"comment_ids\":{\"private_resource\":\"199412764:de7fe630aa70daf598e331bbdfdfb1ff49fa57beebf37abaf33b5d3576420ec1\",\"public_resource\":\"199412764:de7fe630aa70daf598e331bbdfdfb1ff49fa57beebf37abaf33b5d3576420ec1\"},\"mime_type\":\"image/jpeg\",\"file\":\"https://downloader.disk.yandex.ru/disk/784510b39c5e38b55c87680c97e16024c628d6321cd2096429b1a6ac0b9ae495/5e3b041b/bAivw64c2O-nAMw7W4M5XOP2w0VWrSH_bzDEtKhEFKf9VMwmkb_eNPCNXlm7kjxVUARAgjLzQ_k4P22ppPeKMA%3D%3D?uid=0&filename=IMG_20200202_200225.jpg&disposition=attachment&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&fsize=4755002&hid=9f0c17442a085dc9a77ebc7f500c08b9&media_type=image&tknv=v2&etag=bee61d4229ce2ae10ab76caba1ff6ed7\",\"media_type\":\"image\",\"photoslice_time\":\"2020-02-02T17:02:25+00:00\",\"path\":\"/IMG_20200202_200225.jpg\",\"sha256\":\"a034649ef9dca5702c0ced0cf85aafccbf0a69b77bac5700912043c784712584\",\"revision\":1580843944106147,\"md5\":\"bee61d4229ce2ae10ab76caba1ff6ed7\",\"name\":\"IMG_20200202_200225.jpg\"},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"public_url\":\"https://yadi.sk/i/9D1dHahnOSvU1A\",\"views_count\":3,\"exif\":{\"date_time\":\"2018-04-29T18:50:29+00:00\"},\"created\":\"2020-02-03T20:43:15+00:00\",\"type\":\"file\",\"resource_id\":\"199412764:782b7326c26d6e97d1917b391d5ff8f8d3efab868635dc1979f06de6b5330236\",\"modified\":\"2020-02-03T20:43:15+00:00\",\"preview\":\"https://downloader.disk.yandex.ru/preview/3c0162cf10b67d7cb72ef124206f4036fcb6aaa05ef816f43f81a7848b234737/5e3b041b/bAivw64c2O-nAMw7W4M5XMxAUuNqpt7Et_rZlaibmndMOvZFnZIpnHtyBNXXvsMZwZ9_mbmpQV6HkVrOF5oykQ%3D%3D?uid=0&filename=P80429-215028.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v2&size=S&crop=0\",\"size\":3576884,\"comment_ids\":{\"private_resource\":\"199412764:782b7326c26d6e97d1917b391d5ff8f8d3efab868635dc1979f06de6b5330236\",\"public_resource\":\"199412764:782b7326c26d6e97d1917b391d5ff8f8d3efab868635dc1979f06de6b5330236\"},\"mime_type\":\"image/jpeg\",\"file\":\"https://downloader.disk.yandex.ru/disk/39c4da4319a85ba2210bacc904adea7573c58f2f1d289b2655a57b525b1ea717/5e3b041b/bAivw64c2O-nAMw7W4M5XPQQ_2ZIo4tSIp4bpOAhCKOdWZJr2OMefrlK5cOj2w93-e4ohHz3U8O9pdy9nJ8x_g%3D%3D?uid=0&filename=P80429-215028.jpg&disposition=attachment&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&fsize=3576884&hid=138a461b83a61def7e65d9c593160bea&media_type=image&tknv=v2&etag=470bf5faf36f979d2936c38653f19bb8\",\"media_type\":\"image\",\"photoslice_time\":\"2018-04-29T18:50:29+00:00\",\"path\":\"/P80429-215028.jpg\",\"sha256\":\"0fcb8562fcff3dd3e90fbb562a6ae8cdde1e4308d4e2ade59b56e41a750ed492\",\"revision\":1580762630138477,\"md5\":\"470bf5faf36f979d2936c38653f19bb8\",\"name\":\"P80429-215028.jpg\"},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"public_url\":\"https://yadi.sk/i/YngHiP25BJ9SmA\",\"views_count\":2,\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:32+00:00\",\"type\":\"file\",\"resource_id\":\"199412764:595c78663243d520f2726035ba627da5a673662a27721d8f01b9b8be36d7e4c2\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"size\":880429,\"comment_ids\":{\"private_resource\":\"199412764:595c78663243d520f2726035ba627da5a673662a27721d8f01b9b8be36d7e4c2\",\"public_resource\":\"199412764:595c78663243d520f2726035ba627da5a673662a27721d8f01b9b8be36d7e4c2\"},\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/8c768405371e3eb0a0492ea6063e70c1e033d1821dbb7207c0fca1010d8f0fbd/5e3b041b/bAivw64c2O-nAMw7W4M5XAS2czZ8JnCuXXYvU48lkuJbg6V2qXb2TanGtrdEwMq2wu17I2TD-Qhcs_Dg4Rse4w%3D%3D?uid=0&filename=earth.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=880429&hid=d8405b20e31037bed055015d4971c289&media_type=image&tknv=v2&etag=6da37f85d9ccccb8c6b744387cd0df43\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/33c42a185de41804a589d86b9c667cc9e09981dc2dfec59f1b1a3de1cc85ba5f/5e3b041b/d8B-YuYEkT5v5j0P9XW1AZOLZsjZlI7RB7bDQPPCLASvGwOhAvgC4nDGscFJy7teIN3M4SF6mm9CP-eH5vtijA%3D%3D?uid=0&filename=earth.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/earth.png\",\"sha256\":\"78a7791d75c0b98ababbf0cdc89bb8bc44288e590a0e74dde818ba1a17b1f0ab\",\"revision\":1580762633736291,\"md5\":\"6da37f85d9ccccb8c6b744387cd0df43\",\"name\":\"earth.png\"},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:e3fb4f57585517871a5b24044680092ecb06b1337aeead37427927ec4163f5f6\",\"public_resource\":\"199412764:e3fb4f57585517871a5b24044680092ecb06b1337aeead37427927ec4163f5f6\"},\"name\":\"jupiter.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:27+00:00\",\"size\":393293,\"resource_id\":\"199412764:e3fb4f57585517871a5b24044680092ecb06b1337aeead37427927ec4163f5f6\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/21fd9d8ce93ecfeb462a5aedd03b705231d49edeee40fda18d1daa5bbe333a1a/5e3b041b/bAivw64c2O-nAMw7W4M5XIlvBE_ms213uYd8K1ypL4ouv8Klvpl-OvZ3EnU2LQRHJjKpiXdnR0nKj13cmmDfhg%3D%3D?uid=0&filename=jupiter.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=393293&hid=671d08d6de7b1d9769de1d9a5f9117d7&media_type=image&tknv=v2&etag=6f52b45f949afb82e437035182d75f76\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/59d3035bd7369de4dcdf66dc4583a46e6b657b25dc9cc017db58d8d7b63576be/5e3b041b/RTyU9mz-JpyQxAESACoC4F3yT1RhOOBpZ9GD-5UxyhIUxxNFHUiYW76WnBr2faaVQ7vWcfp8CDd_5AENv4Omkw%3D%3D?uid=0&filename=jupiter.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/jupiter.png\",\"sha256\":\"96b5785801c6ff2ecaa1493514d07794d98f1caa7e173de1f6c799ce82ba9cae\",\"type\":\"file\",\"md5\":\"6f52b45f949afb82e437035182d75f76\",\"revision\":1580762549050330},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:ae8210b78957f71032859769fbef7d0d274d05a36c5cefc5fd050fad9d73c9cf\",\"public_resource\":\"199412764:ae8210b78957f71032859769fbef7d0d274d05a36c5cefc5fd050fad9d73c9cf\"},\"name\":\"mars.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:23+00:00\",\"size\":524233,\"resource_id\":\"199412764:ae8210b78957f71032859769fbef7d0d274d05a36c5cefc5fd050fad9d73c9cf\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/4661468f99e679ce5ee06167285fe0dbc6927c4baaa1e5fc2c92342bcd7977d1/5e3b041b/bAivw64c2O-nAMw7W4M5XEJR6lp7zpEfFrWMh8utOMoiz2qLpedmaZAUvQrwirjcxMz9y_RQyyefnaen7AIGeQ%3D%3D?uid=0&filename=mars.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=524233&hid=c64a952c9ac2fc384f2ed529f63595e7&media_type=image&tknv=v2&etag=514386c3e34dec3191a0d5731a7b27be\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/54959e38d520434390d0f62b7c2cfe9bacab23e22fa24b12a917eb57ba6719eb/5e3b041b/9liheqeRTViAJksw_9YBELTRacNRoduYGgZaw7YydomW66n3G_CgoZCwI28dO1IGB0rgfN2djuznZ-owDb8Yjg%3D%3D?uid=0&filename=mars.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/mars.png\",\"sha256\":\"3e18ddc27626eace37ab21421cf2fdc9c9f76ad824f4602f4b264c25e24fb3d5\",\"type\":\"file\",\"md5\":\"514386c3e34dec3191a0d5731a7b27be\",\"revision\":1580762545339403},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:cc54f9fa85e988619a25c666c3fd3bcbeca9df81ae29b8bacae96231ed1f90de\",\"public_resource\":\"199412764:cc54f9fa85e988619a25c666c3fd3bcbeca9df81ae29b8bacae96231ed1f90de\"},\"name\":\"mercury.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:19+00:00\",\"size\":287332,\"resource_id\":\"199412764:cc54f9fa85e988619a25c666c3fd3bcbeca9df81ae29b8bacae96231ed1f90de\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/76dc37cae2d2083a17add37b8377ae6a33cde991c439d6331ffd65ca0fa45503/5e3b041b/bAivw64c2O-nAMw7W4M5XEZP9kK9cZ9ktQAluRgpVPtNb51IPJZyTf2dx-6JFyGoxlTG4XKr4xfR0OXu4RmUug%3D%3D?uid=0&filename=mercury.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=287332&hid=92c22a054626dc857d25647a604e2687&media_type=image&tknv=v2&etag=0885744298235ea1c7898f77442a3361\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/b7a7f92e6df238d6c52e9a4fdc4cd13647d0dec6d40299313769d4d4876dfd5b/5e3b041b/v1ZKQ7T8kEN0P_27i0NLOluSTMC3l0XIVfRcTIbEgA9cI6l6W--5ar4ZeBLZVoBp6GAsntpxj7zLr-hPMa-hjg%3D%3D?uid=0&filename=mercury.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/mercury.png\",\"sha256\":\"3256ffa92ac45426a166d13879928e89759239f6e6f1bd510e9765891563e96d\",\"type\":\"file\",\"md5\":\"0885744298235ea1c7898f77442a3361\",\"revision\":1580762540897901},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:6b5a1ac9ed11cfbf02a56a31b90d43e9a5dafba4c4390d4efdef7b3bb9448710\",\"public_resource\":\"199412764:6b5a1ac9ed11cfbf02a56a31b90d43e9a5dafba4c4390d4efdef7b3bb9448710\"},\"name\":\"neptun.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:16+00:00\",\"size\":769045,\"resource_id\":\"199412764:6b5a1ac9ed11cfbf02a56a31b90d43e9a5dafba4c4390d4efdef7b3bb9448710\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/3574bf611cc0cb398aadd2d80ccec9dd8b2851d83e7246e2fb5fe696c9566af8/5e3b041b/bAivw64c2O-nAMw7W4M5XBBUgGuO1p4zwPhMswfj3EbU1s4cGiurmfcDUmebAmHVNW0aOidbsC9AIO2xLSmGdw%3D%3D?uid=0&filename=neptun.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=769045&hid=06c6decdf0704baf580bb9e99ffefbd2&media_type=image&tknv=v2&etag=4fb0158c7c313bc58043db81b4394457\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/bcb014fb90f51ca0884c702b03aa417a3b1f93d9b61cb1f8ed34221d7d05d216/5e3b041b/CJwujYpufCKOgDkHyqOQJHrbHhiSXrW2AdjVc9N3EXk5PLy1-pAijDo0Ixc0WnEU6G3q36a9pfCVcQxwle2mPw%3D%3D?uid=0&filename=neptun.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/neptun.png\",\"sha256\":\"f0bbe1419763553d7c7fa37a01b319093ca824b904558454eef0bfb15fe78541\",\"type\":\"file\",\"md5\":\"4fb0158c7c313bc58043db81b4394457\",\"revision\":1580762537572659},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:28fc9e0f2e3203449f5eb65c3adbf3f8a0fd88944390102cbba9a1cfd6c7e038\",\"public_resource\":\"199412764:28fc9e0f2e3203449f5eb65c3adbf3f8a0fd88944390102cbba9a1cfd6c7e038\"},\"name\":\"pluto.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:11+00:00\",\"size\":153784,\"resource_id\":\"199412764:28fc9e0f2e3203449f5eb65c3adbf3f8a0fd88944390102cbba9a1cfd6c7e038\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/6cb82e4025a7d8473c011afe4663c95cbf54474e35ba5c06f3935d7591343e21/5e3b041b/bAivw64c2O-nAMw7W4M5XPuurRK4fRWTrVv9-ChxZMW2GkuiO59d4XPietAoeHagnqzK4UNqqaUGz1Weg7ZG2g%3D%3D?uid=0&filename=pluto.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=153784&hid=2e5f23a0ca19a09dc94922d71d5cd712&media_type=image&tknv=v2&etag=ba0f56eb9ba461d0694f474a0a9a0340\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/989b46cc9f7723199eafa9460bca7da1391233b64c0956dd6740361f08eedcad/5e3b041b/yHxtc_US2SQaY4Yc7HHEEbkONi0F4DNVeUi0wf1d--6g7aYiqfezYIylO82RbzyFozhpv65bHFE4UeMH3cLw-w%3D%3D?uid=0&filename=pluto.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/pluto.png\",\"sha256\":\"5c0fabc655b53db142cc7617b65bd4dc3ae3c5b5fa568dc64d6b550acd21202f\",\"type\":\"file\",\"md5\":\"ba0f56eb9ba461d0694f474a0a9a0340\",\"revision\":1580762532997678},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:d3a6f773dd8621c0b505ea45dec3d4202430fe5cec4120025c8bbb4ee65e0cac\",\"public_resource\":\"199412764:d3a6f773dd8621c0b505ea45dec3d4202430fe5cec4120025c8bbb4ee65e0cac\"},\"name\":\"saturn.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:07+00:00\",\"size\":692482,\"resource_id\":\"199412764:d3a6f773dd8621c0b505ea45dec3d4202430fe5cec4120025c8bbb4ee65e0cac\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/e0cad986c1b388bf6a97ddf3645f8406916e6ab7dfeedebac4aabab5f9f2e1db/5e3b041b/bAivw64c2O-nAMw7W4M5XLMDRlHMN9RuEcSgKlURcUtq0RhkNSCUQ5ypUl_ec64bgPs_DjlptbrDtCnQSFXFzA%3D%3D?uid=0&filename=saturn.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=692482&hid=c9a2ece08b502fac33ab6dddaef248fe&media_type=image&tknv=v2&etag=2e2d58bd1ee381969351cd7bb5510380\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/67e135dfe18d7ed0d6431fd7b51849b07f111a150c60c5afadcb0cb7e52dae48/5e3b041b/VI9pNN9Iu0dFCDZV8sGr-LLZjDkFUH8U2umCx0CU_LRtnpgnfV_PQMkG6wVZp4dijIllYrqMoryldA0RsBF5hg%3D%3D?uid=0&filename=saturn.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/saturn.png\",\"sha256\":\"3ecbfba6aba295bcca328d986b936b5944edd4f2f8373fd957390e893a33411c\",\"type\":\"file\",\"md5\":\"2e2d58bd1ee381969351cd7bb5510380\",\"revision\":1580762529556559},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:d6e288691facd1129b9924550965b85ef2a0b87441812450536e3b0ce30decfc\",\"public_resource\":\"199412764:d6e288691facd1129b9924550965b85ef2a0b87441812450536e3b0ce30decfc\"},\"name\":\"sun.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:42:04+00:00\",\"size\":135720,\"resource_id\":\"199412764:d6e288691facd1129b9924550965b85ef2a0b87441812450536e3b0ce30decfc\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/6e2e83e8835a728f26441fc0cc796938df786d4ade4d5c0bd1c83067a5f52029/5e3b041b/bAivw64c2O-nAMw7W4M5XH06OWh0d4fONtslJIyom79GpsGdLa5SzAjHh51iIhihOBchaSe6DsuaNuPwuOfrQQ%3D%3D?uid=0&filename=sun.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=135720&hid=83944d57b205c26ee6a6a1b7efce169a&media_type=image&tknv=v2&etag=0f0d8a6d1f6d8c3ea0d744355293e38b\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/fc19f9c44eb21f6d908453b9518cd6054cdf25be1cda04759abfcc2d9283a63b/5e3b041b/onc7eKMbfwU70mN1ffNTajzvQexLXLPO_X6OuO7eBcEnga6x-k-Y9Qf68rTplWm7aavOe9fBkOybBN2Pif9NdQ%3D%3D?uid=0&filename=sun.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/sun.png\",\"sha256\":\"76157dbd44dc08893766d1709f54b3bfa628903f78ec551837069949d4c683b7\",\"type\":\"file\",\"md5\":\"0f0d8a6d1f6d8c3ea0d744355293e38b\",\"revision\":1580762525591478},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:c9e557ad0bdb6eab218c112f7cbe73a646c8136e83471450653e61e443554ac1\",\"public_resource\":\"199412764:c9e557ad0bdb6eab218c112f7cbe73a646c8136e83471450653e61e443554ac1\"},\"name\":\"test.txt\",\"exif\":{},\"created\":\"2020-02-04T12:57:47+00:00\",\"size\":4,\"resource_id\":\"199412764:c9e557ad0bdb6eab218c112f7cbe73a646c8136e83471450653e61e443554ac1\",\"modified\":\"2020-02-04T12:57:47+00:00\",\"mime_type\":\"text/plain\",\"file\":\"https://downloader.disk.yandex.ru/disk/47916e3bb43b55bba6f548832a2013f2c661ae4bba2bf3eb2d48a8b9b71974c9/5e3b041b/momkGL3uxGKzwZmChqWSYB3uyvwivS2Je7aVHZt1Nk8tgvfadZoBPVzzzXeJ-VcJ0Zu_EYELSzmu5RdBhmhsEQ%3D%3D?uid=0&filename=test.txt&disposition=attachment&hash=&limit=0&content_type=text%2Fplain&owner_uid=0&fsize=4&hid=a1e99636c8a61edbd7e2e5b3168ab2cf&media_type=document&tknv=v2&etag=098f6bcd4621d373cade4e832627b4f6\",\"media_type\":\"document\",\"preview\":\"https://downloader.disk.yandex.ru/preview/b118cb668382d760e7ded88920315ab077544fe33eeb27eae41506add9732782/5e3b041b/cHexa06-i-86G_WFQl3aY3apH0zCqNj0xQ0FfD6iieItGbMUfhhZzoCt7Gl7fxUfFLTWq1LQYEKzrjJB66wa_A%3D%3D?uid=0&filename=test.txt&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/test.txt\",\"sha256\":\"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08\",\"type\":\"file\",\"md5\":\"098f6bcd4621d373cade4e832627b4f6\",\"revision\":1580821067027076},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:46c0cc2e52f93220c28bfc5732c40450ad17b2c8178279ed928f31384ea58029\",\"public_resource\":\"199412764:46c0cc2e52f93220c28bfc5732c40450ad17b2c8178279ed928f31384ea58029\"},\"name\":\"uran.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:41:59+00:00\",\"size\":215168,\"resource_id\":\"199412764:46c0cc2e52f93220c28bfc5732c40450ad17b2c8178279ed928f31384ea58029\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/8547e3e7377dbbe96f5c7270907060c3c0f38b1ca46e0277b3b3420a1d42fb7b/5e3b041b/bAivw64c2O-nAMw7W4M5XJ1f_ZBZIocRit_JMUJlu9FzBPlYtPrjn6eUmyMKVZP-k3ZLeHkdTPxO_e_EJxv04Q%3D%3D?uid=0&filename=uran.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=215168&hid=dcf22490f1fb742f91548453638f5e27&media_type=image&tknv=v2&etag=231ca8aed190db6fc377709ad28c26fe\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/292012f4283f40da04c734b787fcb82e32d04cd0dfc129d0b454a5cab39696b7/5e3b041b/jkyEdAg8VkkPq9hIqH6yJXR2x3xYyH9pi1r7pelCwv2iTaVrR2zXVc6Yca_16uKzDkMUsYmZu3BbYhUsbnMDNQ%3D%3D?uid=0&filename=uran.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/uran.png\",\"sha256\":\"01e208e13347049b397eb9ce68387177072ed16493cf880ce317463b52695cdb\",\"type\":\"file\",\"md5\":\"231ca8aed190db6fc377709ad28c26fe\",\"revision\":1580762520633809},{\"antivirus_status\":\"clean\",\"public_key\":\"fgYYf2UgLYz7MNwOFZUUc2Ud/kzYBgX3KUSN+VFkJX2hKT1+n1/NWsvVjAUxcjclq/J6bpmRyOJonT3VoXnDag==\",\"comment_ids\":{\"private_resource\":\"199412764:e3e534a284829e80948802f10a8d248319c6fbacd29b12edd71c36f4630cea2c\",\"public_resource\":\"199412764:e3e534a284829e80948802f10a8d248319c6fbacd29b12edd71c36f4630cea2c\"},\"name\":\"venus.png\",\"exif\":{\"date_time\":\"2020-02-03T20:41:37+00:00\"},\"created\":\"2020-02-03T20:41:58+00:00\",\"size\":85688,\"resource_id\":\"199412764:e3e534a284829e80948802f10a8d248319c6fbacd29b12edd71c36f4630cea2c\",\"modified\":\"2020-02-03T20:41:37+00:00\",\"mime_type\":\"image/png\",\"file\":\"https://downloader.disk.yandex.ru/disk/e31d18a67d3c7bc6e413923b8487b82a984a5f750ffadc4bc5b27ef0658ca6ce/5e3b041b/bAivw64c2O-nAMw7W4M5XHLflyeQewUz0Pj2WrKlqVdCwkC4z9QdJAK6ClHjVJuX31SiHi666d_jPuLKRn2e7g%3D%3D?uid=0&filename=venus.png&disposition=attachment&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=85688&hid=de0145a75ddf50367d5bc55818849908&media_type=image&tknv=v2&etag=f71de2a594c531813143df0ee2a7b387\",\"media_type\":\"image\",\"preview\":\"https://downloader.disk.yandex.ru/preview/561bd980c6080af47c17dc59a2d808b061b5e8ff731ced2230e0d31ff2f76388/5e3b041b/JoWD23JfufMa771j-etxX3R2x3xYyH9pi1r7pelCwv33OXUUAkmlCaHd8tLXclN6FyTlUX6otfVMg9LbboNdaA%3D%3D?uid=0&filename=venus.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&tknv=v2&size=S&crop=0\",\"path\":\"/venus.png\",\"sha256\":\"365dae44459ab98b176a66e317231df130c3bc7886305ab28cb6950b329bf252\",\"type\":\"file\",\"md5\":\"f71de2a594c531813143df0ee2a7b387\",\"revision\":1580762519502998}],\"limit\":20,\"offset\":0,\"path\":\"/\",\"total\":13},\"name\":\"SunSystem\",\"exif\":{},\"resource_id\":\"199412764:f961ec61e24d5d45c8b9a1a56b208f6cb7fcb0d9f0c578d1ee82251a49ccc659\",\"revision\":1580794568560637,\"created\":\"2020-02-03T20:28:16+00:00\",\"modified\":\"2020-02-03T20:28:16+00:00\",\"owner\":{\"login\":\"gigilom\",\"display_name\":\"gigilom\",\"uid\":\"199412764\"},\"path\":\"/\",\"comment_ids\":{\"private_resource\":\"199412764:f961ec61e24d5d45c8b9a1a56b208f6cb7fcb0d9f0c578d1ee82251a49ccc659\",\"public_resource\":\"199412764:f961ec61e24d5d45c8b9a1a56b208f6cb7fcb0d9f0c578d1ee82251a49ccc659\"},\"type\":\"dir\",\"views_count\":469}\n"));
-            recyclerView.setAdapter(adapter);
-//        } catch(NullPointerException ex) {
-//            Intent intent = new Intent(this, ServerErrorActivity.class);
-//            startActivity(intent);
-//        }
-
     }
 
-    private class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder>  {
+    private class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
+
+        private Image[] mSpacePhotos;
+        private Context mContext;
+
+        public ImageAdapter(Context context, Image[] spacePhotos) {
+            mContext = context;
+            mSpacePhotos = spacePhotos;
+        }
+
+        public ImageAdapter(Context context) {
+            mContext = context;
+            mSpacePhotos = new Image[0];
+        }
+
+        public void setmSpacePhotos(ArrayList<YaDiskFile> files){
+            mSpacePhotos = Image.getSpacePhotos(files);
+            notifyDataSetChanged();
+        }
 
         @Override
         public ImageAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -65,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             Glide.with(mContext)
                     .load(spacePhoto.getUrl())
                     .placeholder(R.drawable.ic_cloud_off_red)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
         }
 
@@ -88,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 int position = getAdapterPosition();
-                if(position != RecyclerView.NO_POSITION) {
+                if (position != RecyclerView.NO_POSITION) {
                     Image spacePhoto = mSpacePhotos[position];
 
                     Intent intent = new Intent(mContext, ImageActivity.class);
@@ -96,14 +151,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-        }
-
-        private Image[] mSpacePhotos;
-        private Context mContext;
-
-        public ImageAdapter(Context context, Image[] spacePhotos) {
-            mContext = context;
-            mSpacePhotos = spacePhotos;
         }
     }
 }
