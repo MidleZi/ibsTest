@@ -5,12 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
+
+import androidx.palette.graphics.Palette;
 import ru.azaychikov.ibstest.R;
 import ru.azaychikov.ibstest.model.Image;
 
@@ -22,14 +25,16 @@ public class ImageActivity extends Activity  {
 
     public static final String EXTRA_SPACE_PHOTO = "SpacePhotoActivity.SPACE_PHOTO";
 
-    private ImageView mImageView;
+    private PhotoView mImageView ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        mImageView = (ImageView) findViewById(R.id.image);
+        mImageView = (PhotoView) findViewById(R.id.image);
+        PhotoViewAttacher attacher = new PhotoViewAttacher(mImageView);
+        attacher.setZoomable(true);
         Image spacePhoto = getIntent().getParcelableExtra(EXTRA_SPACE_PHOTO);
 
         //ПОлучаем картинку и отрисовываем на экране

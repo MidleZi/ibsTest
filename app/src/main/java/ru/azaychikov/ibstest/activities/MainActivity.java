@@ -9,10 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,10 +24,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.model.Image;
 import ru.azaychikov.ibstest.model.YaDiskFile;
 import ru.azaychikov.ibstest.model.YaDiskFolder;
-import ru.azaychikov.ibstest.model.Image;
 
 /**
  * Главный экран
@@ -39,7 +38,6 @@ import ru.azaychikov.ibstest.model.Image;
  * Планы:
  * 1) сделать обновление по свайпу
  * 2) сделать перелистываение в ImageActivity
- * 3) сделать зум в ImageActivity
  */
 
 
