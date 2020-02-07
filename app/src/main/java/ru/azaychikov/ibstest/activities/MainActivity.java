@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,9 +30,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.model.Image;
 import ru.azaychikov.ibstest.model.YaDiskFile;
 import ru.azaychikov.ibstest.model.YaDiskFolder;
-import ru.azaychikov.ibstest.model.Image;
 
 /**
  * Главный экран
@@ -43,10 +44,18 @@ import ru.azaychikov.ibstest.model.Image;
  */
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
 
     private ArrayList<YaDiskFile> files;
     private MainActivity.ImageAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private String responseString;
+    private String url;
+    private JsonObjectRequest jsObjRequest;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RequestQueue queue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +63,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         adapter = new MainActivity.ImageAdapter(this);
-        RequestQueue queue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this);
         String publicUrl = "https://yadi.sk/d/G8AQKlUhT47Z_w";
-        String url = null;
         try {
             url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=" + URLEncoder.encode(publicUrl, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
             //Тут мы получаем данные от Я.диск
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
             //В случаей успешного ответа, получаем JSON, парсим его в список какртинок и передаем в адаптер на отрисовку
             @Override
             public void onResponse(JSONObject response) {
                 // TODO Auto-generated method stub
-                String responseString = response.toString();
+                responseString = response.toString();
                 files = YaDiskFolder.responseToFolder(responseString).getImages();
                 adapter.setmSpacePhotos(files);
             }
@@ -88,11 +96,49 @@ public class MainActivity extends AppCompatActivity {
         //ставим выполнение запроса в очередь в volley
         queue.add(jsObjRequest);
         //отрисовываем лаяут главного экрана
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark);
+        layoutManager = new GridLayoutManager(this, 2);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
+
+    }
+
+    @Override
+    public void onRefresh() {
+
+        jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+            //В случаей успешного ответа, получаем JSON, парсим его в список какртинок и передаем в адаптер на отрисовку
+            @Override
+            public void onResponse(JSONObject response) {
+                // TODO Auto-generated method stub
+                responseString = response.toString();
+                files = YaDiskFolder.responseToFolder(responseString).getImages();
+                adapter.setmSpacePhotos(files);
+                adapter.setmSpacePhotos(files);
+                recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(layoutManager);
+            }
+        }, new Response.ErrorListener() {
+
+            //В случае ошибки ответа от сервера выводим сообщение об ошибке
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Auto-generated method stub
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Ошибка загрузки, попробуйте еще раз", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        //ставим выполнение запроса в очередь в volley
+        queue.add(jsObjRequest);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
