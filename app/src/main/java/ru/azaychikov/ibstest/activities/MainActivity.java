@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setHasFixedSize(true);
         //ставим выполнение запроса в очередь в volley
         queue.add(jsObjRequest);
-        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setLayoutManager(layoutManager);
         swipeRefreshLayout.setRefreshing(false);
     }
