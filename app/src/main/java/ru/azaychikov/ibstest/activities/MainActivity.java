@@ -109,35 +109,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-
-        jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-            //В случаей успешного ответа, получаем JSON, парсим его в список какртинок и передаем в адаптер на отрисовку
-            @Override
-            public void onResponse(JSONObject response) {
-                // TODO Auto-generated method stub
-                responseString = response.toString();
-                files = YaDiskFolder.responseToFolder(responseString).getImages();
-                adapter.setmSpacePhotos(files);
-                adapter.setmSpacePhotos(files);
-                recyclerView = (RecyclerView) findViewById(R.id.rv_images);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(layoutManager);
-            }
-        }, new Response.ErrorListener() {
-
-            //В случае ошибки ответа от сервера выводим сообщение об ошибке
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Ошибка загрузки, попробуйте еще раз", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
-
+        recyclerView.setHasFixedSize(true);
         //ставим выполнение запроса в очередь в volley
         queue.add(jsObjRequest);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+        recyclerView.setLayoutManager(layoutManager);
         swipeRefreshLayout.setRefreshing(false);
     }
 
