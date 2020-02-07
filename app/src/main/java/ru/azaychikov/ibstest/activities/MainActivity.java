@@ -36,11 +36,6 @@ import ru.azaychikov.ibstest.model.YaDiskFolder;
 
 /**
  * Главный экран
- *
- * Планы:
- * 1) сделать обновление по свайпу
- * 2) сделать перелистываение в ImageActivity
- * 3) сделать зум в ImageActivity
  */
 
 
