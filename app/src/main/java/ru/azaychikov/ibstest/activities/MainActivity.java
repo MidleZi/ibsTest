@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             ImageView imageView = holder.mPhotoImageView;
 
             Glide.with(mContext)
-                    .load(spacePhoto.getUrl())
+                    .load(spacePhoto.getUrlPreview())
                     .placeholder(R.drawable.ic_cloud_off_red)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);

@@ -12,11 +12,13 @@ import java.util.ArrayList;
 public class Image implements Parcelable {
 
     private String mUrl;
+    private String mUrlPreview;
     private String mTitle;
 
-    public Image(String url, String title) {
+    public Image(String url, String title, String preview) {
         mUrl = url;
         mTitle = title;
+        mUrlPreview = preview;
     }
 
     protected Image(Parcel in) {
@@ -40,11 +42,19 @@ public class Image implements Parcelable {
         return mUrl;
     }
 
+    public String getUrlPreview() {
+        return mUrlPreview;
+    }
+
+    public String getName() {
+        return mUrl;
+    }
+
     public static Image[] getSpacePhotos(ArrayList<YaDiskFile> files) {
         Image[] image = new Image[files.size()];
         for (int i = 0; i < files.size(); i++) {
             if (files.get(i).getMedia_type().equals("image")) {
-                image[i] = new Image(files.get(i).getFile(), files.get(i).getName());
+                image[i] = new Image(files.get(i).getFile(), files.get(i).getName(),files.get(i).getPreview());
             }
         }
         return image;
