@@ -77,7 +77,7 @@ public class FolderActivity extends AppCompatActivity implements SwipeRefreshLay
             public void onFileClick(File file) {
                 if(file.getType().equals("file")) {
                     Intent intent = new Intent(FolderActivity.this, ImageActivity.class);
-                    intent.putExtra(ImageActivity.RESOURCE_ID, file.getFile());
+                    intent.putExtra(File.class.getSimpleName(), file);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(FolderActivity.this, FolderActivity.class);

@@ -8,16 +8,15 @@ import ru.azaychikov.exampleretrofit.model.File;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.github.chrisbanes.photoview.PhotoView;
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.ortiz.touchview.TouchImageView;
 
 public class ImageActivity extends AppCompatActivity {
 
     public static final String RESOURCE_ID = "ImageActivity.RESOURCE_ID";
-    private PhotoView mImageView;
-    private PhotoViewAttacher photoViewAttacher;
+    private TouchImageView mImageView;
+    //private PhotoViewAttacher photoViewAttacher;
 
 
 
@@ -30,16 +29,23 @@ public class ImageActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mImageView = (PhotoView) findViewById(R.id.image);
-        String fileUrl = getIntent().getExtras().getString(RESOURCE_ID);
-        photoViewAttacher = new PhotoViewAttacher(mImageView);
-        photoViewAttacher.setZoomable(true);
-        Picasso.Builder builder = new Picasso.Builder(this);
-        builder.downloader(new OkHttp3Downloader(this));
+        Bundle arguments = getIntent().getExtras();
+        File file = null;
+        if(arguments!=null){
+            file = arguments.getParcelable(File.class.getSimpleName());
+            System.out.println(file.toString());
+            getSupportActionBar().setTitle(file.getName());
+        }
 
-        builder.build().load(fileUrl)
-                .placeholder((R.drawable.ic_launcher_background))
-                .error(R.drawable.ic_launcher_background)
+        mImageView = (TouchImageView) findViewById(R.id.image);
+//        photoViewAttacher = new PhotoViewAttacher(mImageView);
+//        photoViewAttacher.setZoomable(true);
+
+        Glide.with(this)
+                .load(file.getFile())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
                 .into(mImageView);
 
     }

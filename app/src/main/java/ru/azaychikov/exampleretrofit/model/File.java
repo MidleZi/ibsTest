@@ -241,10 +241,11 @@ public class File implements Parcelable {
         return Objects.hash(getName(),getPath(),getMediaType(), getPreview(), getFile());
     }
 
-    public File(String publicKey, String path, String name) {
+    public File(String publicKey, String path, String name, String file) {
         this.publicKey = publicKey;
         this.path = path;
         this.name = name;
+        this.file = file;
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {
@@ -253,7 +254,8 @@ public class File implements Parcelable {
             String publicKey = source.readString();
             String path = source.readString();
             String name = source.readString();
-            return new File(publicKey, path,name);
+            String file = source.readString();
+            return new File(publicKey, path,name, file);
         }
 
         @Override
@@ -272,5 +274,6 @@ public class File implements Parcelable {
         parcel.writeString(publicKey);
         parcel.writeString(path);
         parcel.writeString(name);
+        parcel.writeString(file);
     }
 }

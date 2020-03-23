@@ -1,23 +1,17 @@
 package ru.azaychikov.exampleretrofit.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 import java.util.Map;
-
+import androidx.recyclerview.widget.RecyclerView;
 import ru.azaychikov.exampleretrofit.R;
-import ru.azaychikov.exampleretrofit.activity.FolderActivity;
 import ru.azaychikov.exampleretrofit.model.File;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
@@ -43,32 +37,39 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        Picasso.Builder builder = new Picasso.Builder(context);
-        builder.downloader(new OkHttp3Downloader(context));
-
 
         if(dataList.get(position).getType().equals("dir") && imageInFolders.containsKey(dataList.get(position).getName())){
             holder.txtTitle.setText(dataList.get(position).getName());
             for(File file : imageInFolders.get(dataList.get(position).getName())) {
                 if(file.getType().equals("file")) {
-                    builder.build().load(file.getPreview())
-                            .placeholder((R.drawable.ic_launcher_background))
-                            .error(R.drawable.ic_launcher_background)
+                    Glide.with(context)
+                            .load(file.getPreview())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.drawable.ic_launcher_foreground)
                             .into(holder.coverImage);
+
+                    Glide.with(context)
+                            .load(file.getPreview())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL);
                     return;
                 }
             }
-            builder.build().load(imageInFolders.get(dataList.get(position).getName()).get(0).getPreview())
-                    .placeholder((R.drawable.ic_launcher_background))
-                    .error(R.drawable.ic_launcher_background)
+            Glide.with(context)
+                    .load(dataList.get(position).getPreview())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_foreground)
                     .into(holder.coverImage);
         }
         else if (dataList.get(position).getType().equals("file") && dataList.get(position).getMediaType().equals("image")) {
             holder.txtTitle.setText(dataList.get(position).getName());
             holder.icFolder.setVisibility(View.GONE);
-            builder.build().load(dataList.get(position).getPreview())
-                    .placeholder((R.drawable.ic_launcher_background))
-                    .error(R.drawable.ic_launcher_background)
+            Glide.with(context)
+                    .load(dataList.get(position).getPreview())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_foreground)
                     .into(holder.coverImage);
         }
     }
