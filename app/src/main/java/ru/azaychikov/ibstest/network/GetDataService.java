@@ -1,11 +1,9 @@
-package ru.azaychikov.exampleretrofit.network;
-
-import java.util.List;
+package ru.azaychikov.ibstest.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import ru.azaychikov.exampleretrofit.model.Root;
+import ru.azaychikov.ibstest.model.Root;
 
 public interface GetDataService {
 

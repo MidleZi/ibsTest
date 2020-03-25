@@ -1,4 +1,4 @@
-package ru.azaychikov.exampleretrofit.adapter;
+package ru.azaychikov.ibstest.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,13 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
 import java.util.Map;
-import androidx.recyclerview.widget.RecyclerView;
-import ru.azaychikov.exampleretrofit.R;
-import ru.azaychikov.exampleretrofit.model.File;
+
+import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.model.File;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
 

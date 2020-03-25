@@ -1,4 +1,4 @@
-package ru.azaychikov.exampleretrofit.network;
+package ru.azaychikov.ibstest.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

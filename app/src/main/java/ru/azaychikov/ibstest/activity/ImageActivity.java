@@ -1,16 +1,17 @@
-package ru.azaychikov.exampleretrofit.activity;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import ru.azaychikov.exampleretrofit.R;
-import ru.azaychikov.exampleretrofit.model.File;
+package ru.azaychikov.ibstest.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ortiz.touchview.TouchImageView;
+
+import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.model.File;
 
 public class ImageActivity extends AppCompatActivity {
 

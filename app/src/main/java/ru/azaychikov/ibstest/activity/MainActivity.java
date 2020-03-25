@@ -1,4 +1,4 @@
-package ru.azaychikov.exampleretrofit.activity;
+package ru.azaychikov.ibstest.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,13 +15,13 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.azaychikov.exampleretrofit.R;
-import ru.azaychikov.exampleretrofit.adapter.CustomAdapter;
-import ru.azaychikov.exampleretrofit.model.File;
-import ru.azaychikov.exampleretrofit.model.Root;
-import ru.azaychikov.exampleretrofit.network.GetDataService;
-import ru.azaychikov.exampleretrofit.network.RetrofitClientInstance;
-import static ru.azaychikov.exampleretrofit.model.File.getImageFromFolder;
+import ru.azaychikov.ibstest.R;
+import ru.azaychikov.ibstest.adapter.CustomAdapter;
+import ru.azaychikov.ibstest.model.File;
+import ru.azaychikov.ibstest.model.Root;
+import ru.azaychikov.ibstest.network.GetDataService;
+import ru.azaychikov.ibstest.network.RetrofitClientInstance;
+import static ru.azaychikov.ibstest.model.File.getImageFromFolder;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
