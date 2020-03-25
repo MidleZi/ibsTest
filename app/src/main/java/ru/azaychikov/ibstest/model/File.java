@@ -1,4 +1,4 @@
-package ru.azaychikov.exampleretrofit.model;
+package ru.azaychikov.ibstest.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

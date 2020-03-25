@@ -1,4 +1,4 @@
-package ru.azaychikov.exampleretrofit.model;
+package ru.azaychikov.ibstest.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
