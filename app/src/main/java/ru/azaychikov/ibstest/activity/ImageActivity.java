@@ -34,7 +34,6 @@ public class ImageActivity extends AppCompatActivity {
         File file = null;
         if(arguments!=null){
             file = arguments.getParcelable(File.class.getSimpleName());
-            System.out.println(file.toString());
             getSupportActionBar().setTitle(file.getName());
         }
 
@@ -48,7 +47,6 @@ public class ImageActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
                 .into(mImageView);
-
     }
 
     @Override

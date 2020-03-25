@@ -48,19 +48,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
                 if(file.getType().equals("file")) {
                     Glide.with(context)
                             .load(file.getPreview())
+                            .load(file.getFile())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground)
                             .into(holder.coverImage);
-
-                    Glide.with(context)
-                            .load(file.getPreview())
-                            .diskCacheStrategy(DiskCacheStrategy.ALL);
                     return;
                 }
             }
             Glide.with(context)
                     .load(dataList.get(position).getPreview())
+                    .load(dataList.get(position).getFile())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.ic_launcher_background)
                     .error(R.drawable.ic_launcher_foreground)
@@ -71,6 +69,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             holder.icFolder.setVisibility(View.GONE);
             Glide.with(context)
                     .load(dataList.get(position).getPreview())
+                    .load(dataList.get(position).getFile())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.ic_launcher_background)
                     .error(R.drawable.ic_launcher_foreground)
@@ -85,6 +84,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
 
     public interface OnFileClickListener {
         void onFileClick(File file);
+    }
+
+    public void setImageInFolders(Map<String, List<File>> imageInFolders) {
+        this.imageInFolders = imageInFolders;
+        notifyDataSetChanged();
+    }
+
+    public Map<String, List<File>> getImageInFolders() {
+        return imageInFolders;
+
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
