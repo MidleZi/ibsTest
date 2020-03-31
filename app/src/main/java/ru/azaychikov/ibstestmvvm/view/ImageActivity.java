@@ -1,25 +1,20 @@
-package ru.azaychikov.ibstest.activity;
-
-import android.os.Bundle;
-import android.view.MenuItem;
+package ru.azaychikov.ibstestmvvm.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import ru.azaychikov.ibstestmvvm.R;
+import ru.azaychikov.ibstestmvvm.model.File;
+
+import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ortiz.touchview.TouchImageView;
 
-import ru.azaychikov.ibstest.R;
-import ru.azaychikov.ibstest.model.File;
-
 public class ImageActivity extends AppCompatActivity {
 
-    public static final String RESOURCE_ID = "ImageActivity.RESOURCE_ID";
     private TouchImageView mImageView;
-    //private PhotoViewAttacher photoViewAttacher;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +33,8 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         mImageView = (TouchImageView) findViewById(R.id.image);
-//        photoViewAttacher = new PhotoViewAttacher(mImageView);
-//        photoViewAttacher.setZoomable(true);
+
+        System.out.println(file);
 
         Glide.with(this)
                 .load(file.getFile())
@@ -59,4 +54,5 @@ public class ImageActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

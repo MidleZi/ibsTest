@@ -1,4 +1,4 @@
-package ru.azaychikov.ibstest.model;
+package ru.azaychikov.ibstestmvvm.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -125,5 +125,22 @@ public class Root {
 
     public void setViewsCount(Integer viewsCount) {
         this.viewsCount = viewsCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Root{" +
+                "publicKey='" + publicKey + '\'' +
+                ", publicUrl='" + publicUrl + '\'' +
+                ", embedded=" + embedded +
+                ", name='" + name + '\'' +
+                ", resourceId='" + resourceId + '\'' +
+                ", revision=" + revision +
+                ", created='" + created + '\'' +
+                ", modified='" + modified + '\'' +
+                ", path='" + path + '\'' +
+                ", type='" + type + '\'' +
+                ", viewsCount=" + viewsCount +
+                '}';
     }
 }

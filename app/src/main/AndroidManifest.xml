@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.azaychikov.ibstest">
+    package="ru.azaychikov.ibstestmvvm">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,9 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.FolderActivity"></activity>
-        <activity android:name=".activity.ImageActivity" />
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".view.ImageActivity"></activity>
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

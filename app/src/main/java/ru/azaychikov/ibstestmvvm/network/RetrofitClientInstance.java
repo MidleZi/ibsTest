@@ -1,4 +1,4 @@
-package ru.azaychikov.ibstest.network;
+package ru.azaychikov.ibstestmvvm.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -10,7 +10,7 @@ public class RetrofitClientInstance {
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
-            retrofit = new retrofit2.Retrofit.Builder()
+            retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

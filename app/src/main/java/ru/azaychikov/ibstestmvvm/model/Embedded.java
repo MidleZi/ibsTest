@@ -1,4 +1,4 @@
-package ru.azaychikov.ibstest.model;
+package ru.azaychikov.ibstestmvvm.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

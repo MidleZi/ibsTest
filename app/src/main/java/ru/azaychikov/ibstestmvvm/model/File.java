@@ -1,4 +1,4 @@
-package ru.azaychikov.ibstest.model;
+package ru.azaychikov.ibstestmvvm.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -219,7 +219,7 @@ public class File implements Parcelable {
                 ", path='" + getPath() + '\'' + "\n" +
                 ", media_type='" + getMediaType() + '\'' + "\n" +
                // ", preview='" + preview + '\'' + "\n" +
-              //  ", file='" + file + '\'' + "\n" +
+                ", file='" + file + '\'' + "\n" +
                 //", folderName='" + folderName + '\'' + "\n" +
                 '}';
     }

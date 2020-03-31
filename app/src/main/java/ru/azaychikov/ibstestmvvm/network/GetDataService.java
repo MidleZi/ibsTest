@@ -1,9 +1,9 @@
-package ru.azaychikov.ibstest.network;
+package ru.azaychikov.ibstestmvvm.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import ru.azaychikov.ibstest.model.Root;
+import ru.azaychikov.ibstestmvvm.model.Root;
 
 public interface GetDataService {
 
