@@ -1,9 +1,9 @@
-package ru.azaychikov.ibstest.model;
+package com.example.ibstestmvp.entities;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Root {
+public class RootFolder {
 
     @SerializedName("public_key")
     @Expose

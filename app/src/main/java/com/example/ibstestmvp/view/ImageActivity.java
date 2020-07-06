@@ -1,25 +1,18 @@
-package ru.azaychikov.ibstest.activity;
-
-import android.os.Bundle;
-import android.view.MenuItem;
+package com.example.ibstestmvp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
+import android.os.Bundle;
+import android.view.MenuItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.ibstestmvp.R;
+import com.example.ibstestmvp.entities.Item;
 import com.ortiz.touchview.TouchImageView;
-
-import ru.azaychikov.ibstest.R;
-import ru.azaychikov.ibstest.model.File;
 
 public class ImageActivity extends AppCompatActivity {
 
-    public static final String RESOURCE_ID = "ImageActivity.RESOURCE_ID";
     private TouchImageView mImageView;
-    //private PhotoViewAttacher photoViewAttacher;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +24,17 @@ public class ImageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle arguments = getIntent().getExtras();
-        File file = null;
+        Item item = null;
         if(arguments!=null){
-            file = arguments.getParcelable(File.class.getSimpleName());
-            getSupportActionBar().setTitle(file.getName());
+            item = arguments.getParcelable(Item.class.getSimpleName());
+            getSupportActionBar().setTitle(item.getName());
         }
 
-        mImageView = (TouchImageView) findViewById(R.id.image);
-//        photoViewAttacher = new PhotoViewAttacher(mImageView);
-//        photoViewAttacher.setZoomable(true);
+        mImageView = findViewById(R.id.image);
 
         Glide.with(this)
-                .load(file.getFile())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .load(item.getDownloadLink())
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
                 .into(mImageView);
@@ -59,4 +50,5 @@ public class ImageActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

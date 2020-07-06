@@ -1,8 +1,7 @@
-package ru.azaychikov.ibstest.model;
+package com.example.ibstestmvp.entities;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class Embedded {
@@ -15,7 +14,7 @@ public class Embedded {
     private String publicKey;
     @SerializedName("items")
     @Expose
-    private List<File> items = null;
+    private List<Item> items = null;
     @SerializedName("limit")
     @Expose
     private Integer limit;
@@ -45,11 +44,11 @@ public class Embedded {
         this.publicKey = publicKey;
     }
 
-    public List<File> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setItems(List<File> items) {
+    public void setItems(List<Item> items) {
         this.items = items;
     }
 

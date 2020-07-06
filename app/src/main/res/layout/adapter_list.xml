@@ -24,23 +24,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/title"
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:textAlignment="textStart"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:lines="2"
-            android:textSize="15sp" />
+            <TextView
+                android:id="@+id/title"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:textAlignment="textStart"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:lines="2"
+                android:textSize="15sp" />
 
-        <ImageView
-            android:id="@+id/iconFolder"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:gravity="center"
-            android:src="@drawable/ic_folder" />
+            <ImageView
+                android:id="@+id/iconFolder"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:src="@drawable/ic_folder" />
         </LinearLayout>
     </LinearLayout>
 
