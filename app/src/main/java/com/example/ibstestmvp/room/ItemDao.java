@@ -27,13 +27,13 @@ public interface ItemDao {
     Item getById(long id);
 
     @Insert
-    void insert(Item employee);
+    void insert(Item item);
 
     @Update
-    void update(Item employee);
+    void update(Item item);
 
     @Delete
-    void delete(Item employee);
+    void delete(Item item);
 
     @Query("DELETE FROM item")
     void deletdAllItem();
